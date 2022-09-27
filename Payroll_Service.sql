@@ -12,3 +12,6 @@ StartDate Date
 Insert into employee_payroll
 (EmployeeName,EmployeeSalary,StartDate)
 values('Ajay Rahod','750000','2020-10-07'),('Vijay','650000','2019-05-08'),('Priya','450500','2021-01-17'),('Asif','950500','2017-12-12');
+
+-----UC-4 Retrieve all data from the table-----
+select * from employee_payroll;

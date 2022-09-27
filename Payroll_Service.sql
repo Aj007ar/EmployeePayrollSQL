@@ -15,3 +15,7 @@ values('Ajay Rahod','750000','2020-10-07'),('Vijay','650000','2019-05-08'),('Pri
 
 -----UC-4 Retrieve all data from the table-----
 select * from employee_payroll;
+
+-----UC-5 Retrieve Specific Data-----
+select * from employee_payroll where EmployeeName = 'Vijay';
+select EmployeeSalary from employee_payroll where StartDate Between Cast('2019-01-01' as Date) and GETDATE();

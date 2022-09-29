@@ -53,3 +53,111 @@ Update employee_payroll set IncomeTax = '200'
 
 -----UC-10 Add Priya to Marketing department -----
 Insert into employee_payroll(EmployeeName,BasicPay,StartDate,Gender,EmployeePhoneNumber,EmployeeDepartment,EmployeeAddress,Deductions,TaxablePay,IncomeTax,NetPay)values('Priya','350500','2021-01-17','F','7345787969','Marketing','Mumbai','0','0','0','0');
+-----UC-11 Create table Empt Dept-----
+---Company Details---
+create table company
+(
+company_Id int identity(1,1) primary key,
+company_name varchar(255)
+)
+Insert into company values('Abc'),('Vohi')
+select * from company
+---Employee Details---
+create table Employee
+(
+EmployeeId int identity(1,1) primary key,
+EmployeeName varchar(255),
+Gender char(1),
+EmployeePhoneNumber bigint,
+EmployeeAddress varchar(255),
+StartDate date,
+CompanyId int
+Foreign key(CompanyId) references Company(company_Id)
+)
+Insert into Employee values
+('Ajay Rathod','M','7812453698','Yavatmal','2020-10-07','1'),
+('Vijay','M','7214587875','Nagpur','2019-05-08','2'),
+('Priya','F','7345787969','Pune','2021-01-17','2'),
+('Asif','M','9814753647','Mumbai','2017-12-12','1')
+select * from Employee
+---Payroll table---
+create table payroll
+(
+EmpId int, 
+BasicPay float,
+TaxablePay float,
+IncomeTax float,
+Deductions float,
+NetPay float
+foreign key(EmpId) references Employee(EmployeeId)
+)
+Insert into payroll(EmpId,BasicPay,IncomeTax,Deductions)values('1','650000','20000','24000'),
+('2','700000','20000','23000'),
+('3','350500','20000','20000'),
+('4','950500','23000','24000')
+select * from payroll
+Update payroll set TaxablePay = (BasicPay-Deductions)
+Update payroll set NetPay = (TaxablePay-IncomeTax)
+---Dept Table---
+create table department_table
+(
+DeptId int identity(1,1) primary key,
+DeptName varchar(255)
+)
+insert into department_table values('Sales'),('Marketing'),('HR'),('Customer Service')
+select * from department_table
+-----Emp Dept table-----
+create table emp_Dept
+(
+DeptId int,
+EmpId int
+foreign key(EmpId) references Employee(EmployeeId),
+foreign key(DeptId) references department_table(DeptId)
+)
+insert into emp_Dept values
+('3','1'),('1','2'),
+('4','3'),('3','4'),('2','3')
+select * from emp_Dept
+
+-----UC-12 perform select queries------
+select company.company_Id ,company.company_name,EmployeeId,EmployeeName,Gender,EmployeePhoneNumber,EmployeeAddress,StartDate,payroll.BasicPay,TaxablePay,IncomeTax,Deductions,NetPay,department_table.DeptName from Employee
+inner join company on company.company_Id = Employee.CompanyId
+inner join payroll on payroll.EmpId = Employee.EmployeeId
+inner join emp_Dept on Employee.EmployeeId = emp_Dept.EmpId
+inner join department_table on department_table.DeptId = emp_Dept.DeptId
+
+---Salary for particular employee---
+select Employee.EmployeeId,Employee.EmployeeName,payroll.BasicPay from payroll inner join
+Employee on Employee.EmployeeId=payroll.EmpId where Employee.EmployeeName = 'Ajay Rathod'
+
+---Salary between date of joining and current date----
+select Employee.EmployeeId,Employee.EmployeeName,payroll.BasicPay from payroll inner join
+Employee on Employee.EmployeeId = payroll.EmpId where Employee.StartDate between Cast('2019-01-01' as Date) and GETDATE();
+
+---Sum of salary based on gender---
+select sum(payroll.BasicPay) as TotalSalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId group by Employee.Gender
+
+select sum(payroll.BasicPay) as TotalSalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId where Employee.Gender = 'F' group by Employee.Gender
+
+---Average of salary based on gender---
+select avg(payroll.BasicPay) as averagesalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId group by Employee.Gender
+
+select AVG(payroll.BasicPay) as averagesalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId where Employee.Gender = 'F' group by Employee.Gender
+
+---Minimum salary based on gender---
+select min(payroll.BasicPay) as minimumsalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId group by Employee.Gender
+
+select min(payroll.BasicPay) as minimumsalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId where Employee.Gender = 'F' group by Employee.Gender
+
+---Maximum salary based on gender---
+select max(payroll.BasicPay) as maximumsalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId group by Employee.Gender
+
+select max(payroll.BasicPay) as maximumsalary,Employee.Gender from Employee
+inner join payroll on Employee.EmployeeId = payroll.EmpId where Employee.Gender = 'F' group by Employee.Gender
